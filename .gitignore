@@ -1,1 +1,5 @@
 venv/
+*.iml
+*.xml
+*.pyc
+**/__pycache__/
