@@ -2,14 +2,17 @@ datatable backend
 ===
 [![Build Status](https://travis-ci.org/htwenning/datatable.svg?branch=master)](https://travis-ci.org/htwenning/datatable)
 
-requirements:
+**requirements** :
 
 - jquery databale.js
 - sanic 
 - sqlalchemy
 
+**install** :
 
-usage:
+> pip install Sanic-Sqlalchemy-DataTable
+
+**usage** :
 
 ```python
 from sanic_sa_datatable import gen_datatable
