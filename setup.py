@@ -8,7 +8,8 @@ if sys.version_info[0] == 2:
     raise Exception('python3 required.')
 
 install_requirements = [
-    'SQLAlchemy==1.2.17'
+    'SQLAlchemy==1.2.17',
+    'sanic==18.12.0'
 ]
 
 setup(
