@@ -12,7 +12,7 @@ requirements:
 usage:
 
 ```python
-from datatable import gen_datatable
+from sanic_sa_datatable import gen_datatable
 
 @app.route('/page')
 async def page(request):
