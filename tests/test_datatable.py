@@ -29,7 +29,7 @@ def db():
     
 
 def test_datatable(db):
-    from sanic_sa_datatable import gen_datatable
+    from sanic_sa_datatable import gen_datatable, dt_put, dt_post, dt_delete
 
     page = Page(page_id=1, page_title='a', created_by=1)
     db.add(page)
@@ -57,6 +57,28 @@ def test_datatable(db):
                 'start': [self.start],
                 'length': [self.length],
                 'search[value]': self.search_value
+            }
+
+        @property
+        def form(self):
+            return {
+                '0': 11,
+                '1': 'test',
+                '2': 3,
+                '3': 6
+            }
+
+    class Request2:
+        def __init__(self):
+            pass
+
+        @property
+        def form(self):
+            return {
+                '0': 22,
+                '1': 'test_zk',
+                '2': 3,
+                '3': 6
             }
 
     request = Request()
@@ -122,3 +144,29 @@ def test_datatable(db):
         'recordsTotal': 1,
         'recordsFiltered': 1
     }
+
+    res = dt_post(request, db, Page)
+    assert json.loads(res.body).get('code') == 0
+    page = db.query(Page).filter(Page.id == 6).one()
+    assert page.page_title == 'test'
+
+    request2 = Request2()
+    page = Page(page_id=22, page_title='hello', created_by=2)
+    db.add(page)
+    db.commit()
+    page = db.query(Page).filter(Page.id == 7).one()
+    assert page.page_title == 'hello'
+    primary_key = 'id'
+    key_index = 3
+    res = dt_put(request2, db, Page, primary_key, key_index)
+    assert json.loads(res.body).get('code') == 0
+    page = db.query(Page).filter(Page.id == 6).one()
+    assert page.page_title == 'test_zk'
+
+    primary_key = 'id'
+    key_index = 3
+    res = dt_delete(request, db, Page, primary_key, key_index)
+    assert json.loads(res.body).get('code') == 0
+    page = db.query(Page).filter(Page.id == 6).first()
+    assert page == None
+
