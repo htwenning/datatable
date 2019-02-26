@@ -147,14 +147,14 @@ def test_datatable(db):
 
     res = dt_post(request, db, Page)
     assert json.loads(res.body).get('code') == 0
-    page = db.query(Page).filter(Page.id == 5).one()
+    page = db.query(Page).filter(Page.id == 6).one()
     assert page.page_title == 'test'
 
     request2 = Request2()
     page = Page(page_id=22, page_title='hello', created_by=2)
     db.add(page)
     db.commit()
-    page = db.query(Page).filter(Page.id == 6).one()
+    page = db.query(Page).filter(Page.id == 7).one()
     assert page.page_title == 'hello'
     primary_key = 'id'
     key_index = 3
