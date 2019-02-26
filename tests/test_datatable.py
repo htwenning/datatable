@@ -29,7 +29,7 @@ def db():
     
 
 def test_datatable(db):
-    from datatable import gen_datatable, dt_put, dt_post, dt_delete
+    from sanic_sa_datatable import gen_datatable, dt_put, dt_post, dt_delete
 
     page = Page(page_id=1, page_title='a', created_by=1)
     db.add(page)

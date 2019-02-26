@@ -13,14 +13,14 @@ install_requirements = [
 ]
 
 setup(
-    name='DataTable',
+    name='Sanic_Sqlalchemy_DataTable',
     version='0.0.1',
     url='https://github.com/htwenning/datatable',
-    license='BSD',
+    license='MIT',
     author='wenning',
     author_email='ht.wenning@foxmail.com',
     description='datatable backend.',
-    packages=['datatable'],
+    packages=['sanic_sa_datatable'],
     include_package_data=True,
     zip_safe=False,
     platforms='any',
