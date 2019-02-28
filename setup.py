@@ -14,7 +14,7 @@ install_requirements = [
 
 setup(
     name='Sanic_Sqlalchemy_DataTable',
-    version='0.0.3',
+    version='0.0.4',
     url='https://github.com/htwenning/datatable',
     license='MIT',
     author='wenning',
