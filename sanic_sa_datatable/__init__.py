@@ -73,19 +73,16 @@ def dt_post(request, db_session, Model, columns=None):
 def dt_put(request, db_session, Model, primary_key, key_index, columns=None):
     if not columns:
         columns = [column.name for column in Model.__table__.columns._all_columns]
-    form_length = len(request.form)
-    column_length = len(columns)
-    if form_length != column_length:
+    try:
+        result = db_session.query(Model).filter(getattr(Model, primary_key) == request.form.get(str(key_index))).one()
+    except Exception as e:
         return response.json({
             'code': 1,
-            'detail': 'error: columns range out of list'
+            'detail': 'error: {}'.format(e)
         })
-    query = db_session.query(Model)
-    query = query.filter(getattr(Model, primary_key) == request.form.get(str(key_index)))
-    result = query.one()
     length = len(request.form)
     for i in range(length):
-        setattr(result, columns.pop(0), request.form.get(str(i)))
+        setattr(result, columns.pop(0), request.form.get(str(i))) if request.form.get(str(i)) else columns.pop(0)
     try:
         db_session.commit()
     except Exception as e:
