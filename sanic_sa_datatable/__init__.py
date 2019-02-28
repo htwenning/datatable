@@ -80,7 +80,7 @@ def dt_put(request, db_session, Model, primary_key, key_index, columns=None):
             'code': 1,
             'detail': 'error: {}'.format(e)
         })
-    length = len(request.form)
+    length = len(columns)
     for i in range(length):
         setattr(result, columns.pop(0), request.form.get(str(i))) if request.form.get(str(i)) else columns.pop(0)
     try:
