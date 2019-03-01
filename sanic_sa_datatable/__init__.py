@@ -97,10 +97,13 @@ def dt_put(request, db_session, Model, primary_key, key_index, columns=None):
     })
 
 
-def dt_delete(request, db_session, Model, primary_key, key_index):
-    query= db_session.query(Model)
+def dt_delete(request, db_session, Model, primary_key, key_index, status=None, attribute=None):
+    query = db_session.query(Model)
     result = query.filter(getattr(Model, primary_key) == request.form.get(str(key_index))).one()
-    db_session.delete(result)
+    if status and attribute:
+        setattr(result, attribute, status)
+    else:
+        db_session.delete(result)
     try:
         db_session.commit()
     except Exception as e:
