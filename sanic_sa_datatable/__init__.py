@@ -70,9 +70,12 @@ def dt_post(request, db_session, Model, columns=None):
     })
 
 
-def dt_put(request, db_session, Model, primary_key, key_index, columns=None):
+def dt_put(request, db_session, Model, primary_key, key_index, columns=None, not_allow=[]):
     if not columns:
-        columns = [column.name for column in Model.__table__.columns._all_columns]
+        columns = [column for column in Model.__table__.columns._all_columns]
+    else:
+        columns_dict = {column.name: column for column in Model.__table__.columns._all_columns if column.name in columns}
+        columns = [columns_dict.get(column) for column in columns]
     try:
         result = db_session.query(Model).filter(getattr(Model, primary_key) == request.form.get(str(key_index))).one()
     except Exception as e:
@@ -82,7 +85,18 @@ def dt_put(request, db_session, Model, primary_key, key_index, columns=None):
         })
     length = len(columns)
     for i in range(length):
-        setattr(result, columns.pop(0), request.form.get(str(i))) if request.form.get(str(i)) else columns.pop(0)
+        if request.form.get(str(i)) and i not in not_allow:
+            try:
+                setattr(result, columns[0].name, columns[0].type.python_type(request.form.get(str(i))))
+                columns.pop(0)
+            except Exception as e:
+                db_session.rollback()
+                return response.json({
+                    'code': 1,
+                    'detail': 'error: {}'.format(e)
+                })
+        else:
+            columns.pop(0)
     try:
         db_session.commit()
     except Exception as e:
