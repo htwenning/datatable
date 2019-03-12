@@ -77,7 +77,14 @@ def dt_put(request, db_session, Model, primary_key, key_index, columns=None, not
         columns_dict = {column.name: column for column in Model.__table__.columns._all_columns if column.name in columns}
         columns = [columns_dict.get(column) for column in columns]
     try:
-        result = db_session.query(Model).filter(getattr(Model, primary_key) == request.form.get(str(key_index))).one()
+        if isinstance(primary_key, list) and isinstance(key_index, list) and len(primary_key) == len(key_index):
+            d = zip(key_index, primary_key)
+            filter_condition = []
+            for index, attribute in d:
+                filter_condition.append(getattr(Model, attribute) == request.form.get(str(index)))
+            result = db_session.query(Model).filter(*filter_condition).one()
+        else:
+            result = db_session.query(Model).filter(getattr(Model, primary_key) == request.form.get(str(key_index))).one()
     except Exception as e:
         return response.json({
             'code': 1,
@@ -113,7 +120,20 @@ def dt_put(request, db_session, Model, primary_key, key_index, columns=None, not
 
 def dt_delete(request, db_session, Model, primary_key, key_index, status=None, attribute=None):
     query = db_session.query(Model)
-    result = query.filter(getattr(Model, primary_key) == request.form.get(str(key_index))).one()
+    try:
+        if isinstance(primary_key, list) and isinstance(key_index, list) and len(primary_key) == len(key_index):
+            d = zip(key_index, primary_key)
+            filter_condition = []
+            for index, attribute in d:
+                filter_condition.append(getattr(Model, attribute) == request.form.get(str(index)))
+            result = query.filter(*filter_condition).one()
+        else:
+            result = query.filter(getattr(Model, primary_key) == request.form.get(str(key_index))).one()
+    except Exception as e:
+        return response.json({
+            'code': 1,
+            'detail': 'delete error: {}'.format(e)
+        })
     if status and attribute:
         setattr(result, attribute, status)
     else:
